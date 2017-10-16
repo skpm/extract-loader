@@ -1,5 +1,5 @@
 {
-  "name": "extract-loader",
+  "name": "@skpm/extract-loader",
   "version": "1.0.1",
   "description": "webpack loader to extract HTML and CSS from the bundle",
   "main": "lib/extractLoader.js",

@@ -108,6 +108,10 @@ function loadModule(request) {
  * @returns {string}
  */
 function runModule(src, filename, publicPath = "") {
+    if (src.split("_webpack_resources/")[1]) {
+        return src.split("_webpack_resources/")[1].split('").path()')[0];
+    }
+
     const script = new vm.Script(src, {
         filename,
         displayErrors: true,
