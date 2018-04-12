@@ -6,10 +6,10 @@
     "include": [
         "src"
     ],
-    "lines": 97,
-    "statements": 97,
+    "lines": 94,
+    "statements": 95,
     "functions": 93,
-    "branches": 87,
+    "branches": 85,
     "check-coverage": true,
     "sourceMap": false,
     "instrument": false
