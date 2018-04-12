@@ -3,7 +3,7 @@ import path from "path";
 
 const pathToExtractLoader = path.resolve(
     __dirname,
-    "../../lib/extractLoader.js"
+    "../../src/extractLoader.js"
 );
 
 export default function ({ testModule, publicPath, loaderOptions }) {
@@ -12,6 +12,7 @@ export default function ({ testModule, publicPath, loaderOptions }) {
     return new Promise((resolve, reject) => {
         webpack(
             {
+                mode: "development",
                 entry: testModulePath,
                 output: {
                     path: path.resolve(__dirname, "../dist"),
@@ -92,7 +93,7 @@ export default function ({ testModule, publicPath, loaderOptions }) {
             },
             (err, stats) => {
                 if (err || stats.hasErrors() || stats.hasWarnings()) {
-                    reject(err || stats.toString("errors-only"));
+                    reject(err || stats.toString("minimal"));
                 } else {
                     resolve(stats);
                 }
