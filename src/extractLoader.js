@@ -40,7 +40,7 @@ function extractLoader(content) {
 
             // If the required file is a css-loader helper, we just require it with node's require.
             // If the required file should be processed by a loader we do not touch it (even if it is a .js file).
-            if (/^[^!]*node_modules[/\\]css-loader[/\\].*\.js$/i.test(absPath)) {
+            if (/^[^!]*node_modules[/\\]_?css-loader(@\d+\.\d+.\d+@css-loader)?[/\\].*\.js$/i.test(absPath)) {
                 // Mark the file as dependency so webpack's watcher is working for the css-loader helper.
                 // Other dependencies are automatically added by loadModule() below
                 this.addDependency(absPath);
@@ -69,7 +69,7 @@ function extractLoader(content) {
             )
         )
         .then(results =>
-            sandbox.module.exports.toString().replace(new RegExp(rndPlaceholder, "g"), () => results.shift())
+            sandbox.module.exports.toString().replace(new RegExp(rndPlaceholder, "g"), () => results.length > 1 ? results.shift() : results[0])
         )
         .then(content => callback(null, content))
         .catch(callback);
@@ -101,7 +101,7 @@ function loadModule(request) {
  */
 function runModule(src, filename, publicPath = "") {
     if (src.split("_webpack_resources/")[1]) {
-        return src.split("_webpack_resources/")[1].split('").path()')[0];
+        return src.split("_webpack_resources/")[1].split('").path()')[0].replace(/";$/, "");
     }
 
     const script = new vm.Script(src, {
