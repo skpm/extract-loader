@@ -101,7 +101,7 @@ function loadModule(request) {
  */
 function runModule(src, filename, publicPath = "") {
     if (src.split("_webpack_resources/")[1]) {
-        return src.split("_webpack_resources/")[1].split('").path()')[0];
+        return src.split("_webpack_resources/")[1].split('").path()')[0].replace(/";$/, "");
     }
 
     const script = new vm.Script(src, {
