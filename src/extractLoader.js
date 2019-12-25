@@ -69,7 +69,7 @@ function extractLoader(content) {
             )
         )
         .then(results =>
-            sandbox.module.exports.toString().replace(new RegExp(rndPlaceholder, "g"), () => results.shift())
+            sandbox.module.exports.toString().replace(new RegExp(rndPlaceholder, "g"), () => results.length > 1 ? results.shift() : results[0])
         )
         .then(content => callback(null, content))
         .catch(callback);
