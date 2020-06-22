@@ -16,7 +16,8 @@ import { getOptions } from "loader-utils";
  * Random placeholder. Marks the location in the source code where the result of other modules should be inserted.
  * @type {string}
  */
-const rndPlaceholder = "__EXTRACT_LOADER_PLACEHOLDER__" + rndNumber() + rndNumber();
+const rndPlaceholder =
+    "__EXTRACT_LOADER_PLACEHOLDER__" + rndNumber() + rndNumber();
 
 /**
  * Executes the given module's src in a fake context in order to get the resulting string.
@@ -35,12 +36,16 @@ function extractLoader(content) {
         displayErrors: true,
     });
     const sandbox = {
-        require: resourcePath => {
-            const absPath = path.resolve(path.dirname(this.resourcePath), resourcePath).split("?")[0];
+        require: (resourcePath) => {
+            const absPath = path
+                .resolve(path.dirname(this.resourcePath), resourcePath)
+                .split("?")[0];
 
             // If the required file is a css-loader helper, we just require it with node's require.
             // If the required file should be processed by a loader we do not touch it (even if it is a .js file).
-            if (/^[^!]*node_modules[/\\]css-loader[/\\].*\.js$/i.test(absPath)) {
+            if (
+                /^[^!]*node_modules[/\\]css-loader[/\\].*\.js$/i.test(absPath)
+            ) {
                 // Mark the file as dependency so webpack's watcher is working for the css-loader helper.
                 // Other dependencies are automatically added by loadModule() below
                 this.addDependency(absPath);
@@ -62,16 +67,18 @@ function extractLoader(content) {
     script.runInNewContext(sandbox);
 
     Promise.all(dependencies.map(loadModule, this))
-        .then(sources =>
+        .then((sources) =>
             sources.map(
                 // runModule may throw an error, so it's important that our promise is rejected in this case
                 (src, i) => runModule(src, dependencies[i], publicPath)
             )
         )
-        .then(results =>
-            sandbox.module.exports.toString().replace(new RegExp(rndPlaceholder, "g"), () => results.shift())
+        .then((results) =>
+            sandbox.module.exports
+                .toString()
+                .replace(new RegExp(rndPlaceholder, "g"), () => results.shift())
         )
-        .then(content => callback(null, content))
+        .then((content) => callback(null, content))
         .catch(callback);
 }
 
@@ -85,7 +92,9 @@ function extractLoader(content) {
 function loadModule(request) {
     return new Promise((resolve, reject) => {
         // LoaderContext.loadModule automatically calls LoaderContext.addDependency for all requested modules
-        this.loadModule(request, (err, src) => (err ? reject(err) : resolve(src)));
+        this.loadModule(request, (err, src) =>
+            err ? reject(err) : resolve(src)
+        );
     });
 }
 
@@ -101,7 +110,10 @@ function loadModule(request) {
  */
 function runModule(src, filename, publicPath = "") {
     if (src.split("_webpack_resources/")[1]) {
-        return src.split("_webpack_resources/")[1].split('").path()')[0];
+        return src
+            .split("_webpack_resources/")[1]
+            .split('").path()')[0]
+            .replace(/";$/, "");
     }
 
     const script = new vm.Script(src, {
@@ -122,9 +134,7 @@ function runModule(src, filename, publicPath = "") {
  * @returns {string}
  */
 function rndNumber() {
-    return Math.random()
-        .toString()
-        .slice(2);
+    return Math.random().toString().slice(2);
 }
 
 /**
@@ -144,11 +154,19 @@ function getPublicPath(options, context) {
         return options[property];
     }
 
-    if (context.options && context.options.output && property in context.options.output) {
+    if (
+        context.options &&
+        context.options.output &&
+        property in context.options.output
+    ) {
         return context.options.output[property];
     }
 
-    if (context._compilation && context._compilation.outputOptions && property in context._compilation.outputOptions) {
+    if (
+        context._compilation &&
+        context._compilation.outputOptions &&
+        property in context._compilation.outputOptions
+    ) {
         return context._compilation.outputOptions[property];
     }
 
